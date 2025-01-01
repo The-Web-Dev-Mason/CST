@@ -223,31 +223,35 @@
             </div>
             
             <form class="booking-form" id="bookingForm">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="service">Service Type</label>
-                    <select id="service" name="service" required>
-                        <option value="">Select a service</option>
-                        <option value="full-service">Full Car Service</option>
-                        <option value="tyre">Tyre Services</option>
-                        <option value="lighting">Lighting Solutions</option>
-                        <option value="mobile">Mobile Services</option>
-                        <option value="bodywork">Body Work</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="service">Service Type</label>
+                        <select id="service" name="service" required>
+                            <option value="">Select a service</option>
+                            <option value="full-service">Full Car Service</option>
+                            <option value="tyre">Tyre Services</option>
+                            <option value="lighting">Lighting Solutions</option>
+                            <option value="mobile">Mobile Services</option>
+                            <option value="bodywork">Body Work</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -290,10 +294,20 @@
         const nextBtn = document.querySelector('.next-btn');
         
         let currentIndex = 0;
-        const cardsPerView = window.innerWidth > 1024 ? 3 : window.innerWidth > 768 ? 2 : 1;
+        let cardsPerView = getCardsPerView();
+        
+        function getCardsPerView() {
+            if (window.innerWidth <= 480) return 1;
+            if (window.innerWidth <= 768) return 2;
+            return 3;
+        }
         
         function updateCarousel() {
-            const translateValue = -currentIndex * (100 / cardsPerView);
+            const cardWidth = 100 / cardsPerView;
+            cards.forEach(card => {
+                card.style.flex = `0 0 ${cardWidth}%`;
+            });
+            const translateValue = -currentIndex * cardWidth;
             carousel.style.transform = `translateX(${translateValue}%)`;
         }
         
@@ -318,12 +332,16 @@
         
         // Handle window resize
         window.addEventListener('resize', function() {
-            const newCardsPerView = window.innerWidth > 1024 ? 3 : window.innerWidth > 768 ? 2 : 1;
+            const newCardsPerView = getCardsPerView();
             if (newCardsPerView !== cardsPerView) {
+                cardsPerView = newCardsPerView;
                 currentIndex = 0;
                 updateCarousel();
             }
         });
+        
+        // Initial setup
+        updateCarousel();
     });
 
     document.getElementById('bookingForm').addEventListener('submit', function(e) {
